@@ -1,0 +1,8 @@
+{
+  "name": "Remix Tabungan Siswa SDN 5 JURIT BARU",
+  "description": "Aplikasi tabungan offline \u0026 online SDN 5 JURIT BARU dengan integrasi Google Sheets, notifikasi WhatsApp otomatis ke orang tua/wali murid, rekap harian/bulanan PDF/Excel, serta portal wali murid.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

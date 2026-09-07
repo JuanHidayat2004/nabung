@@ -44,13 +44,18 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ school, onLoginSuccess
     setErrorMsg('');
 
     const savedPassword = StorageService.getAdminPassword();
-    if (adminUsername.trim().toLowerCase() === 'admin' && adminPassword === savedPassword) {
+    const savedUsername = StorageService.getAdminUsername();
+
+    if (
+      adminUsername.trim().toLowerCase() === savedUsername.toLowerCase() &&
+      adminPassword === savedPassword
+    ) {
       setSuccessMsg('Login Admin Berhasil! Mengalihkan ke dashboard kas...');
       setTimeout(() => {
         onLoginSuccess({
           isAuthenticated: true,
           role: 'admin',
-          adminUsername: 'Bendahara Sekolah SDN 5 Jurit Baru',
+          adminUsername: savedUsername,
           name: 'Bendahara Sekolah',
         });
       }, 350);
@@ -74,9 +79,10 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ school, onLoginSuccess
       return;
     }
 
-    const expectedPassword = student.password || '123456';
+    // Secure authentication: custom student password or student's NISN
+    const expectedPassword = student.password || student.nisn;
     if (parentPassword !== expectedPassword) {
-      setErrorMsg(`Password salah untuk akun ananda ${student.name}.`);
+      setErrorMsg(`Password salah untuk akun ananda ${student.name}. Hubungi bendahara sekolah jika lupa password.`);
       return;
     }
 
@@ -193,7 +199,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ school, onLoginSuccess
                     value={adminUsername}
                     onChange={(e) => setAdminUsername(e.target.value)}
                     required
-                    placeholder="Contoh: admin"
+                    placeholder="Masukkan username admin"
                     className="w-full pl-9 pr-3 py-2.5 text-sm rounded-xl border border-slate-300 focus:outline-hidden focus:ring-2 focus:ring-emerald-600 focus:border-transparent transition-all"
                   />
                 </div>
@@ -239,8 +245,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ school, onLoginSuccess
                 </button>
               </div>
 
-              <div className="mt-3 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[11px] text-slate-500 text-center">
-                Default akun: username <code className="font-mono text-emerald-800 font-semibold">admin</code> • password <code className="font-mono text-emerald-800 font-semibold">admin123</code>
+              <div className="mt-2 text-[11px] text-slate-400 text-center flex items-center justify-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
+                <span>Akses aman khusus bendahara & pengelola kas sekolah</span>
               </div>
             </form>
           ) : (
@@ -248,7 +255,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ school, onLoginSuccess
             <form onSubmit={handleParentLogin} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                  Nama Siswa atau NISN
+                  Nama Lengkap Siswa atau NISN
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -260,7 +267,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ school, onLoginSuccess
                     value={parentIdentifier}
                     onChange={(e) => setParentIdentifier(e.target.value)}
                     required
-                    placeholder="Contoh: Ahmad Faiz atau 0123456781"
+                    placeholder="Masukkan nama lengkap siswa atau NISN"
                     className="w-full pl-9 pr-3 py-2.5 text-sm rounded-xl border border-slate-300 focus:outline-hidden focus:ring-2 focus:ring-emerald-600 focus:border-transparent transition-all"
                   />
                 </div>
@@ -306,8 +313,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ school, onLoginSuccess
                 </button>
               </div>
 
-              <div className="mt-3 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[11px] text-slate-500 text-center">
-                Password default ananda adalah <code className="font-mono text-emerald-800 font-semibold">123456</code> (dapat diganti di portal)
+              <div className="mt-2 text-[11px] text-slate-400 text-center flex items-center justify-center gap-1.5">
+                <Lock className="w-3.5 h-3.5 text-emerald-700" />
+                <span>Portal resmi buku tabungan digital SDN 5 Jurit Baru</span>
               </div>
             </form>
           )}

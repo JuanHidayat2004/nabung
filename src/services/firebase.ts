@@ -113,6 +113,7 @@ export const FirestoreService = {
       wa?: WhatsAppConfig;
       sheets?: GoogleSheetsConfig;
       adminPassword?: string;
+      adminUsername?: string;
     }) => void
   ): Unsubscribe {
     try {
@@ -125,6 +126,7 @@ export const FirestoreService = {
             wa?: WhatsAppConfig;
             sheets?: GoogleSheetsConfig;
             adminPassword?: string;
+            adminUsername?: string;
           } = {};
           snapshot.forEach((docSnap) => {
             if (docSnap.id === SETTINGS_DOCS.SCHOOL_PROFILE) {
@@ -136,6 +138,7 @@ export const FirestoreService = {
             } else if (docSnap.id === SETTINGS_DOCS.ADMIN_CONFIG) {
               const data = docSnap.data();
               if (data?.password) result.adminPassword = data.password;
+              if (data?.username) result.adminUsername = data.username;
             }
           });
           onUpdate(result);
@@ -215,6 +218,15 @@ export const FirestoreService = {
       await setDoc(docRef, { password }, { merge: true });
     } catch (err) {
       console.error('[Firestore] Error saving admin password:', err);
+    }
+  },
+
+  async saveAdminConfig(username: string, password: string): Promise<void> {
+    try {
+      const docRef = doc(db, COLLECTIONS.SETTINGS, SETTINGS_DOCS.ADMIN_CONFIG);
+      await setDoc(docRef, { username, password }, { merge: true });
+    } catch (err) {
+      console.error('[Firestore] Error saving admin config:', err);
     }
   },
 

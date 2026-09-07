@@ -16,6 +16,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
   auth,
   onSuccess,
 }) => {
+  const [adminUser, setAdminUser] = useState(StorageService.getAdminUsername());
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -45,15 +46,18 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
         setErrorMsg('Password lama Admin salah.');
         return;
       }
+      if (adminUser.trim()) {
+        StorageService.setAdminUsername(adminUser.trim());
+      }
       StorageService.setAdminPassword(newPassword);
-      setSuccessMsg('Password Admin berhasil diubah!');
+      setSuccessMsg('Kredensial Admin (Username & Password) berhasil diperbarui!');
     } else if (auth.role === 'parent' && auth.student) {
       const student = StorageService.getStudentById(auth.student.id);
       if (!student) {
         setErrorMsg('Data siswa tidak ditemukan.');
         return;
       }
-      const currentSaved = student.password || '123456';
+      const currentSaved = student.password || student.nisn;
       if (oldPassword !== currentSaved) {
         setErrorMsg('Password lama salah. Silakan periksa kembali.');
         return;
@@ -107,8 +111,27 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
             </div>
           )}
 
+          {auth.role === 'admin' && (
+            <div>
+              <label className="block font-semibold text-slate-700 mb-1">Username Admin</label>
+              <input
+                type="text"
+                value={adminUser}
+                onChange={(e) => setAdminUser(e.target.value)}
+                required
+                placeholder="Masukkan username admin"
+                className="w-full py-2 px-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-600 focus:outline-hidden font-medium"
+              />
+              <span className="text-[10px] text-slate-400 mt-0.5 block">
+                Anda dapat mengganti nama login admin sesuai keinginan.
+              </span>
+            </div>
+          )}
+
           <div>
-            <label className="block font-semibold text-slate-700 mb-1">Password Saat Ini</label>
+            <label className="block font-semibold text-slate-700 mb-1">
+              {auth.role === 'admin' ? 'Password Admin Saat Ini' : 'Password Saat Ini'}
+            </label>
             <input
               type="password"
               value={oldPassword}

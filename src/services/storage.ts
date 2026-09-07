@@ -7,9 +7,11 @@ const STORAGE_KEYS = {
   SCHOOL_PROFILE: 'sdn5_school_profile_v1',
   SHEETS_CONFIG: 'sdn5_sheets_config_v1',
   WA_CONFIG: 'sdn5_wa_config_v1',
+  ADMIN_USERNAME: 'sdn5_admin_username_v1',
   ADMIN_PASSWORD: 'sdn5_admin_password_v1',
   OFFLINE_QUEUE: 'sdn5_offline_queue_v1',
   CLOUD_INITIALIZED: 'sdn5_cloud_initialized_v1',
+  FRESH_PURGE_APPLIED: 'sdn5_fresh_purge_v2',
 };
 
 export const DEFAULT_SCHOOL_PROFILE: SchoolProfile = {
@@ -67,340 +69,83 @@ export const DEFAULT_SHEETS_CONFIG: GoogleSheetsConfig = {
   accessToken: null,
 };
 
-export const INITIAL_STUDENTS: Student[] = [
-  {
-    id: 'std-101',
-    nisn: '0123456781',
-    nis: '1021',
-    name: 'Ahmad Faiz Al-Ghifari',
-    gender: 'L',
-    classId: '1',
-    className: 'Kelas 1',
-    parentName: 'Muhammad Zulkifli (Ayah)',
-    parentPhone: '081234567890',
-    password: '123456',
-    balance: 145000,
-    savingGoal: { target: 300000, label: 'Perlengkapan Sekolah & Sepatu Baru', active: true },
-    address: 'Dusun Montong Gedeng, Jurit Baru',
-    joinedDate: '2025-07-15',
-    status: 'active',
-  },
-  {
-    id: 'std-102',
-    nisn: '0123456782',
-    nis: '1022',
-    name: 'Siti Nur Aisyah',
-    gender: 'P',
-    classId: '1',
-    className: 'Kelas 1',
-    parentName: 'Hj. Rohana (Ibu)',
-    parentPhone: '081987654321',
-    password: '123456',
-    balance: 210000,
-    savingGoal: { target: 500000, label: 'Tabungan Kenaikan Kelas', active: true },
-    address: 'Dusun Jurit Lauk, Jurit Baru',
-    joinedDate: '2025-07-15',
-    status: 'active',
-  },
-  {
-    id: 'std-201',
-    nisn: '0112345683',
-    nis: '0981',
-    name: 'Muhammad Rizky Pratama',
-    gender: 'L',
-    classId: '2',
-    className: 'Kelas 2',
-    parentName: 'H. Sudarman (Ayah)',
-    parentPhone: '087865432109',
-    password: '123456',
-    balance: 380000,
-    savingGoal: { target: 600000, label: 'Sepeda Baru', active: true },
-    address: 'Dusun Tibu Karang, Jurit Baru',
-    joinedDate: '2024-07-15',
-    status: 'active',
-  },
-  {
-    id: 'std-202',
-    nisn: '0112345684',
-    nis: '0982',
-    name: 'Baiq Zahra Maulida',
-    gender: 'P',
-    classId: '2',
-    className: 'Kelas 2',
-    parentName: 'Lalu Samsul Hadi (Ayah)',
-    parentPhone: '085934567812',
-    password: '123456',
-    balance: 520000,
-    savingGoal: { target: 1000000, label: 'Tabungan Masa Depan', active: true },
-    address: 'Dusun Otak Kokok, Jurit Baru',
-    joinedDate: '2024-07-15',
-    status: 'active',
-  },
-  {
-    id: 'std-301',
-    nisn: '0102345685',
-    nis: '0871',
-    name: 'Dimas Ardiansyah',
-    gender: 'L',
-    classId: '3',
-    className: 'Kelas 3',
-    parentName: 'Suryadi (Ayah)',
-    parentPhone: '081345678901',
-    password: '123456',
-    balance: 415000,
-    savingGoal: { target: 750000, label: 'Study Tour & Tas', active: true },
-    address: 'Dusun Dasan Gedang, Jurit Baru',
-    joinedDate: '2023-07-15',
-    status: 'active',
-  },
-  {
-    id: 'std-302',
-    nisn: '0102345686',
-    nis: '0872',
-    name: 'Nurul Hidayah',
-    gender: 'P',
-    classId: '3',
-    className: 'Kelas 3',
-    parentName: 'Khadijah (Ibu)',
-    parentPhone: '082198765432',
-    password: '123456',
-    balance: 630000,
-    savingGoal: { target: 1000000, label: 'Kebutuhan Sekolah', active: true },
-    address: 'Dusun Joben, Jurit Baru',
-    joinedDate: '2023-07-15',
-    status: 'active',
-  },
-  {
-    id: 'std-401',
-    nisn: '0092345687',
-    nis: '0761',
-    name: 'Lalu Fathur Rahman',
-    gender: 'L',
-    classId: '4',
-    className: 'Kelas 4',
-    parentName: 'Lalu M. Taufik (Ayah)',
-    parentPhone: '081912345678',
-    password: '123456',
-    balance: 750000,
-    savingGoal: { target: 1200000, label: 'Laptop/Tablet Belajar', active: true },
-    address: 'Dusun Montong Gedeng, Jurit Baru',
-    joinedDate: '2022-07-15',
-    status: 'active',
-  },
-  {
-    id: 'std-402',
-    nisn: '0092345688',
-    nis: '0762',
-    name: 'Nabila Putri Rahmawati',
-    gender: 'P',
-    classId: '4',
-    className: 'Kelas 4',
-    parentName: 'Wayan Hendra (Ayah)',
-    parentPhone: '087765432190',
-    password: '123456',
-    balance: 890000,
-    savingGoal: { target: 1500000, label: 'Tabungan SMP', active: true },
-    address: 'Dusun Tibu Karang, Jurit Baru',
-    joinedDate: '2022-07-15',
-    status: 'active',
-  },
-  {
-    id: 'std-501',
-    nisn: '0082345689',
-    nis: '0651',
-    name: 'Fauzan Azima',
-    gender: 'L',
-    classId: '5',
-    className: 'Kelas 5',
-    parentName: 'H. Mukhlis (Ayah)',
-    parentPhone: '081234567811',
-    password: '123456',
-    balance: 1120000,
-    savingGoal: { target: 2000000, label: 'Daftar Masuk Pondok / SMP', active: true },
-    address: 'Dusun Jurit Daye, Jurit Baru',
-    joinedDate: '2021-07-15',
-    status: 'active',
-  },
-  {
-    id: 'std-502',
-    nisn: '0082345690',
-    nis: '0652',
-    name: 'Salma Khairunnisa',
-    gender: 'P',
-    classId: '5',
-    className: 'Kelas 5',
-    parentName: 'Mariani (Ibu)',
-    parentPhone: '085234567822',
-    password: '123456',
-    balance: 950000,
-    savingGoal: { target: 1500000, label: 'Biaya Ujian & Bimbel', active: true },
-    address: 'Dusun Otak Kokok, Jurit Baru',
-    joinedDate: '2021-07-15',
-    status: 'active',
-  },
-  {
-    id: 'std-601',
-    nisn: '0072345691',
-    nis: '0541',
-    name: 'Rian Syahputra',
-    gender: 'L',
-    classId: '6',
-    className: 'Kelas 6',
-    parentName: 'Amrullah (Ayah)',
-    parentPhone: '081907654321',
-    password: '123456',
-    balance: 1450000,
-    savingGoal: { target: 2500000, label: 'Biaya Masuk MTs/SMP Negeri', active: true },
-    address: 'Dusun Dasan Jurit, Jurit Baru',
-    joinedDate: '2020-07-15',
-    status: 'active',
-  },
-  {
-    id: 'std-602',
-    nisn: '0072345692',
-    nis: '0542',
-    name: 'Qonita Nailah',
-    gender: 'P',
-    classId: '6',
-    className: 'Kelas 6',
-    parentName: 'Lalu M. Nasir (Ayah)',
-    parentPhone: '087812345699',
-    password: '123456',
-    balance: 1820000,
-    savingGoal: { target: 3000000, label: 'Seragam & Perlengkapan SMP', active: true },
-    address: 'Dusun Joben Lauk, Jurit Baru',
-    joinedDate: '2020-07-15',
-    status: 'active',
-  },
-];
+// Fresh initial dataset without sample dummy students
+export const INITIAL_STUDENTS: Student[] = [];
 
-export const INITIAL_TRANSACTIONS: Transaction[] = [
-  {
-    id: 'tx-20260831-001',
-    studentId: 'std-101',
-    studentName: 'Ahmad Faiz Al-Ghifari',
-    studentNisn: '0123456781',
-    classId: '1',
-    className: 'Kelas 1',
-    type: 'deposit',
-    amount: 25000,
-    previousBalance: 120000,
-    currentBalance: 145000,
-    date: new Date(Date.now() - 3600000 * 4).toISOString(),
-    note: 'Setoran tabungan harian senin',
-    officerName: 'H. SUJAI, S.Pd',
-    waNotificationStatus: 'sent',
-    waSentAt: new Date(Date.now() - 3600000 * 4).toISOString(),
-    syncedToSheets: true,
-  },
-  {
-    id: 'tx-20260831-002',
-    studentId: 'std-102',
-    studentName: 'Siti Nur Aisyah',
-    studentNisn: '0123456782',
-    classId: '1',
-    className: 'Kelas 1',
-    type: 'deposit',
-    amount: 50000,
-    previousBalance: 160000,
-    currentBalance: 210000,
-    date: new Date(Date.now() - 3600000 * 3).toISOString(),
-    note: 'Setoran mingguan',
-    officerName: 'H. SUJAI, S.Pd',
-    waNotificationStatus: 'sent',
-    waSentAt: new Date(Date.now() - 3600000 * 3).toISOString(),
-    syncedToSheets: true,
-  },
-  {
-    id: 'tx-20260831-003',
-    studentId: 'std-201',
-    studentName: 'Muhammad Rizky Pratama',
-    studentNisn: '0112345683',
-    classId: '2',
-    className: 'Kelas 2',
-    type: 'deposit',
-    amount: 30000,
-    previousBalance: 350000,
-    currentBalance: 380000,
-    date: new Date(Date.now() - 3600000 * 2).toISOString(),
-    note: 'Setoran hasil jualan karya seni',
-    officerName: 'H. SUJAI, S.Pd',
-    waNotificationStatus: 'sent',
-    waSentAt: new Date(Date.now() - 3600000 * 2).toISOString(),
-    syncedToSheets: true,
-  },
-  {
-    id: 'tx-20260831-004',
-    studentId: 'std-301',
-    studentName: 'Dimas Ardiansyah',
-    studentNisn: '0102345685',
-    classId: '3',
-    className: 'Kelas 3',
-    type: 'withdraw',
-    amount: 35000,
-    previousBalance: 450000,
-    currentBalance: 415000,
-    date: new Date(Date.now() - 3600000 * 1).toISOString(),
-    note: 'Penarikan untuk beli buku gambar dan krayon',
-    officerName: 'H. SUJAI, S.Pd',
-    waNotificationStatus: 'sent',
-    waSentAt: new Date(Date.now() - 3600000 * 1).toISOString(),
-    syncedToSheets: true,
-  },
-  {
-    id: 'tx-20260830-005',
-    studentId: 'std-601',
-    studentName: 'Rian Syahputra',
-    studentNisn: '0072345691',
-    classId: '6',
-    className: 'Kelas 6',
-    type: 'deposit',
-    amount: 100000,
-    previousBalance: 1350000,
-    currentBalance: 1450000,
-    date: new Date(Date.now() - 86400000 * 1).toISOString(),
-    note: 'Setoran saku bulanan',
-    officerName: 'H. SUJAI, S.Pd',
-    waNotificationStatus: 'sent',
-    waSentAt: new Date(Date.now() - 86400000 * 1).toISOString(),
-    syncedToSheets: true,
-  },
-];
+export const INITIAL_TRANSACTIONS: Transaction[] = [];
 
 let isSyncInitialized = false;
 
 // Helper Storage API with Cloud Firestore Real-time synchronization
 export const StorageService = {
+  // Clear any leftover dummy test students or transactions from previous testing
+  cleanOldDummyDataIfPresent() {
+    try {
+      const isPurged = localStorage.getItem(STORAGE_KEYS.FRESH_PURGE_APPLIED);
+      if (!isPurged) {
+        const rawStudents = localStorage.getItem(STORAGE_KEYS.STUDENTS);
+        if (rawStudents) {
+          try {
+            const parsed = JSON.parse(rawStudents);
+            if (Array.isArray(parsed) && parsed.some((s: Student) => s.id && (s.id.startsWith('std-10') || s.id.startsWith('std-20') || s.id.startsWith('std-30') || s.id.startsWith('std-40') || s.id.startsWith('std-50') || s.id.startsWith('std-60')))) {
+              localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify([]));
+              localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify([]));
+              FirestoreService.clearAllData().catch((err) => console.warn('Clear old dummy data error:', err));
+            }
+          } catch {
+            localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify([]));
+            localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify([]));
+          }
+        }
+        localStorage.setItem(STORAGE_KEYS.FRESH_PURGE_APPLIED, 'true');
+      }
+    } catch {
+      // ignore
+    }
+  },
+
   // Initialize Real-time synchronization with Firestore
   initRealtimeSync(onSyncStatusChange?: (status: { isConnected: boolean; lastSync: Date }) => void) {
+    this.cleanOldDummyDataIfPresent();
+
     if (isSyncInitialized) return () => {};
     isSyncInitialized = true;
 
     // 1. Subscribe to real-time student updates across all devices
     const unsubStudents = FirestoreService.subscribeStudents((cloudStudents) => {
-      if (cloudStudents && cloudStudents.length > 0) {
+      // Detect if cloud still has old sample test data
+      const hasDummyCloud = cloudStudents.some(
+        (s) => s.id && (s.id === 'std-101' || s.id === 'std-102' || s.id === 'std-201')
+      );
+      if (hasDummyCloud) {
+        FirestoreService.clearAllData().catch((err) => console.warn('[Firestore] Error clearing dummy:', err));
+        localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify([]));
+        localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify([]));
+        window.dispatchEvent(new CustomEvent('sdn5_students_updated', { detail: [] }));
+        window.dispatchEvent(new CustomEvent('sdn5_transactions_updated', { detail: [] }));
+        return;
+      }
+
+      if (cloudStudents) {
         localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(cloudStudents));
         window.dispatchEvent(new CustomEvent('sdn5_students_updated', { detail: cloudStudents }));
         if (onSyncStatusChange) {
           onSyncStatusChange({ isConnected: true, lastSync: new Date() });
-        }
-      } else {
-        // If cloud is empty and this is the very first setup, seed initial data to cloud
-        const local = this.getStudents();
-        if (local && local.length > 0) {
-          FirestoreService.syncLocalToCloud(
-            local,
-            this.getTransactions(),
-            this.getSchoolProfile(),
-            this.getWAConfig(),
-            this.getSheetsConfig()
-          ).catch((e) => console.warn('[Firestore] Auto-seed error:', e));
         }
       }
     });
 
     // 2. Subscribe to real-time transactions across all devices
     const unsubTxs = FirestoreService.subscribeTransactions((cloudTxs) => {
+      const hasDummyTxs = cloudTxs.some(
+        (t) => t.id && (t.id.startsWith('tx-20260831') || t.id.startsWith('tx-20260830'))
+      );
+      if (hasDummyTxs) {
+        localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify([]));
+        window.dispatchEvent(new CustomEvent('sdn5_transactions_updated', { detail: [] }));
+        return;
+      }
+
       if (cloudTxs) {
         localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(cloudTxs));
         window.dispatchEvent(new CustomEvent('sdn5_transactions_updated', { detail: cloudTxs }));
@@ -426,6 +171,9 @@ export const StorageService = {
       }
       if (settings.adminPassword) {
         localStorage.setItem(STORAGE_KEYS.ADMIN_PASSWORD, settings.adminPassword);
+      }
+      if (settings.adminUsername) {
+        localStorage.setItem(STORAGE_KEYS.ADMIN_USERNAME, settings.adminUsername);
       }
       if (onSyncStatusChange) {
         onSyncStatusChange({ isConnected: true, lastSync: new Date() });
@@ -679,13 +427,25 @@ export const StorageService = {
     });
   },
 
+  getAdminUsername(): string {
+    return localStorage.getItem(STORAGE_KEYS.ADMIN_USERNAME) || 'admin';
+  },
+
+  setAdminUsername(username: string) {
+    const cleanUser = username.trim();
+    localStorage.setItem(STORAGE_KEYS.ADMIN_USERNAME, cleanUser);
+    FirestoreService.saveAdminConfig(cleanUser, this.getAdminPassword()).catch((err) => {
+      console.warn('[Firestore] Error saving admin username:', err);
+    });
+  },
+
   getAdminPassword(): string {
     return localStorage.getItem(STORAGE_KEYS.ADMIN_PASSWORD) || 'admin123';
   },
 
   setAdminPassword(password: string) {
     localStorage.setItem(STORAGE_KEYS.ADMIN_PASSWORD, password);
-    FirestoreService.saveAdminPassword(password).catch((err) => {
+    FirestoreService.saveAdminConfig(this.getAdminUsername(), password).catch((err) => {
       console.warn('[Firestore] Error saving admin password:', err);
     });
   },
@@ -696,6 +456,7 @@ export const StorageService = {
     localStorage.removeItem(STORAGE_KEYS.SCHOOL_PROFILE);
     localStorage.removeItem(STORAGE_KEYS.SHEETS_CONFIG);
     localStorage.removeItem(STORAGE_KEYS.WA_CONFIG);
+    localStorage.removeItem(STORAGE_KEYS.ADMIN_USERNAME);
     localStorage.removeItem(STORAGE_KEYS.ADMIN_PASSWORD);
     FirestoreService.clearAllData().catch((err) => console.warn(err));
     window.location.reload();

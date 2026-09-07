@@ -41,13 +41,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
     setErrorMsg('');
 
     const savedPassword = StorageService.getAdminPassword();
-    if (adminUsername.trim().toLowerCase() === 'admin' && adminPassword === savedPassword) {
+    const savedUsername = StorageService.getAdminUsername();
+
+    if (
+      adminUsername.trim().toLowerCase() === savedUsername.toLowerCase() &&
+      adminPassword === savedPassword
+    ) {
       setSuccessMsg('Login Admin Berhasil! Mengalihkan...');
       setTimeout(() => {
         onLoginSuccess({
           isAuthenticated: true,
           role: 'admin',
-          adminUsername: 'Bendahara Sekolah SDN 5 Jurit Baru',
+          adminUsername: savedUsername,
           name: 'Bendahara Sekolah',
         });
         onClose();
@@ -72,9 +77,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
       return;
     }
 
-    const expectedPassword = student.password || '123456';
+    const expectedPassword = student.password || student.nisn;
     if (parentPassword !== expectedPassword) {
-      setErrorMsg(`Password salah untuk akun ananda ${student.name}.`);
+      setErrorMsg(`Password salah untuk akun ananda ${student.name}. Hubungi bendahara sekolah jika lupa password.`);
       return;
     }
 

@@ -245,7 +245,7 @@ Bendahara Kas Tabungan ${school.name}`;
       'Saldo Saat Ini (Rp)': s.balance,
       'Target Tabungan': s.savingGoal?.target ? `${s.savingGoal.label} (${s.savingGoal.target})` : '-',
       Alamat: s.address || 'Jurit Baru',
-      'Password Akun': s.password || '123456',
+      'Password Akun': s.password || s.nisn,
       Status: s.status,
     }));
 
@@ -287,7 +287,7 @@ Bendahara Kas Tabungan ${school.name}`;
                 className: `Kelas ${String(row['Kelas'] || '1').replace(/[^0-9]/g, '') || '1'}`,
                 parentName: String(row['Nama Orang Tua / Wali'] || row['Wali'] || 'Orang Tua Siswa'),
                 parentPhone: String(row['No WhatsApp Wali'] || row['WA'] || ''),
-                password: String(row['Password Akun'] || '123456'),
+                password: String(row['Password Akun'] || row['NISN'] || ''),
                 balance: Number(row['Saldo Saat Ini (Rp)'] || row['Saldo'] || 0),
                 address: String(row['Alamat'] || 'Desa Jurit Baru'),
                 joinedDate: new Date().toISOString().split('T')[0],
@@ -461,8 +461,9 @@ Bendahara Kas Tabungan ${school.name}`;
                         <div className="font-bold text-slate-900 text-sm text-emerald-900 tabular-nums">
                           {formatRupiah(student.balance)}
                         </div>
-                        <div className="text-[10px] text-slate-400">
-                          Pass: <code className="bg-slate-100 px-1 rounded font-mono">{student.password || '123456'}</code>
+                        <div className="text-[10px] text-slate-400 flex items-center justify-end gap-1">
+                          <KeyRound className="w-2.5 h-2.5 text-slate-400" />
+                          <span>{student.password ? 'PIN disetel' : 'PIN: NISN'}</span>
                         </div>
                       </td>
                       <td className="py-3 px-4">
@@ -870,7 +871,7 @@ Bendahara Kas Tabungan ${school.name}`;
                   value={newPasswordValue}
                   onChange={(e) => setNewPasswordValue(e.target.value)}
                   required
-                  placeholder="Contoh: 123456 atau juritbaru"
+                  placeholder="Masukkan password baru untuk siswa"
                   className="w-full py-2 px-3 rounded-xl border border-slate-300 font-mono text-sm focus:ring-2 focus:ring-emerald-600"
                 />
               </div>

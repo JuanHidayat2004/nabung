@@ -31,15 +31,24 @@ import { TransactionModal } from './components/TransactionModal';
 import { GoogleSheetsSync } from './components/GoogleSheetsSync';
 import { WhatsAppSettingsModal } from './components/WhatsAppSettingsModal';
 import { ChangePasswordModal } from './components/ChangePasswordModal';
+import { LoginScreen } from './components/LoginScreen';
 import { formatRupiah } from './services/whatsapp';
 
 export default function App() {
-  // Authentication State
-  const [auth, setAuth] = useState<AuthState>({
-    isAuthenticated: true,
-    role: 'admin',
-    adminUsername: 'Bendahara SDN 5 Jurit Baru',
-    name: 'Bendahara Sekolah',
+  // Authentication State: Default to unauthenticated (Login view on first open)
+  const [auth, setAuth] = useState<AuthState>(() => {
+    try {
+      const savedAuth = sessionStorage.getItem('sdn5_auth_session');
+      if (savedAuth) {
+        return JSON.parse(savedAuth);
+      }
+    } catch {
+      // fallback
+    }
+    return {
+      isAuthenticated: false,
+      role: null,
+    };
   });
 
   // Navigation State
@@ -111,6 +120,11 @@ export default function App() {
 
   const handleLoginSuccess = (newAuth: AuthState) => {
     setAuth(newAuth);
+    try {
+      sessionStorage.setItem('sdn5_auth_session', JSON.stringify(newAuth));
+    } catch {
+      // ignore
+    }
     if (newAuth.role === 'parent') {
       setActiveTab('parent-portal');
     } else {
@@ -119,10 +133,16 @@ export default function App() {
   };
 
   const handleLogout = () => {
+    try {
+      sessionStorage.removeItem('sdn5_auth_session');
+    } catch {
+      // ignore
+    }
     setAuth({
       isAuthenticated: false,
       role: null,
     });
+    setActiveTab('dashboard');
   };
 
   const handleOpenNewTransaction = (studentId?: string, type: 'deposit' | 'withdraw' = 'deposit') => {
@@ -149,61 +169,8 @@ export default function App() {
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {!auth.isAuthenticated ? (
-          /* GUEST / WELCOME SCREEN */
-          <div className="max-w-3xl mx-auto py-8 text-center space-y-6">
-            <div className="w-20 h-20 bg-emerald-100 text-emerald-800 rounded-3xl flex items-center justify-center mx-auto shadow-md">
-              <School className="w-10 h-10" />
-            </div>
-
-            <div>
-              <span className="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full border border-emerald-200">
-                Sistem Informasi Kas Tabungan Digital
-              </span>
-              <h2 className="text-3xl font-black text-slate-900 mt-3 tracking-tight">
-                {school.name}
-              </h2>
-              <p className="text-slate-600 text-sm max-w-lg mx-auto mt-2">
-                Pencatatan tabungan transparan untuk wali murid, terintegrasi WhatsApp & Google Sheets otomatis.
-              </p>
-            </div>
-
-            {/* Login Role Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto text-left pt-2">
-              <div
-                onClick={() => setIsAuthModalOpen(true)}
-                className="bg-white p-6 rounded-2xl border-2 border-emerald-600 shadow-md hover:shadow-lg transition-all cursor-pointer group"
-              >
-                <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                  <ShieldCheck className="w-5 h-5" />
-                </div>
-                <h3 className="font-bold text-slate-900 text-base">Login Admin / Bendahara</h3>
-                <p className="text-xs text-slate-500 mt-1">
-                  Pencatatan setor/tarik cepat, manajemen siswa, cetak rekap harian & bulanan, dan sync Sheets.
-                </p>
-                <div className="mt-4 text-xs font-bold text-emerald-700 flex items-center gap-1">
-                  <span>Masuk Sebagai Admin</span>
-                  <ChevronRight className="w-4 h-4" />
-                </div>
-              </div>
-
-              <div
-                onClick={() => setIsAuthModalOpen(true)}
-                className="bg-white p-6 rounded-2xl border border-slate-200 hover:border-emerald-500 shadow-xs hover:shadow-md transition-all cursor-pointer group"
-              >
-                <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                  <Users className="w-5 h-5" />
-                </div>
-                <h3 className="font-bold text-slate-900 text-base">Login Orang Tua / Wali</h3>
-                <p className="text-xs text-slate-500 mt-1">
-                  Cek saldo tabungan ananda, mutasi setoran, target tabungan, dan unduh buku tabungan PDF.
-                </p>
-                <div className="mt-4 text-xs font-bold text-blue-700 flex items-center gap-1">
-                  <span>Masuk Sebagai Wali Murid</span>
-                  <ChevronRight className="w-4 h-4" />
-                </div>
-              </div>
-            </div>
-          </div>
+          /* TAMPILAN LOGIN PERTAMA KALI BUKA WEB */
+          <LoginScreen school={school} onLoginSuccess={handleLoginSuccess} />
         ) : auth.role === 'parent' && auth.student ? (
           /* PARENT / WALI MURID PORTAL */
           <ParentPortal

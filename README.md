@@ -38,7 +38,7 @@ Aplikasi manajemen tabungan siswa resmi untuk **SDN 5 JURIT BARU** yang mendukun
 
 ```bash
 # Clone repository
-git clone https://github.com/sujaihidayat14/nabung.git
+git clone https://github.com/JuanHidayat2004/nabung.git
 
 # Masuk ke folder
 cd nabung

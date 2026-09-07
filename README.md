@@ -5,7 +5,7 @@ Aplikasi manajemen tabungan siswa resmi untuk **SDN 5 JURIT BARU** yang mendukun
 ---
 
 ## 🚀 Repositori GitHub
-- **Pemilik**: `sujaihidayat14`
+- **Pemilik**: `JuanHidayat2004`
 - **Nama Repositori**: `nabung`
 - **URL Repositori**: (https://github.com/JuanHidayat2004/nabung)
 - **URL Live Website (GitHub Pages)**: (https://juanhidayat2004.github.io/nabung/)

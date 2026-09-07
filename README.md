@@ -8,13 +8,13 @@ Aplikasi manajemen tabungan siswa resmi untuk **SDN 5 JURIT BARU** yang mendukun
 - **Pemilik**: `sujaihidayat14`
 - **Nama Repositori**: `nabung`
 - **URL Repositori**: (https://github.com/JuanHidayat2004/nabung)
-- **URL Live Website (GitHub Pages)**: [https://sujaihidayat14.github.io/nabung/](https://sujaihidayat14.github.io/nabung/)
+- **URL Live Website (GitHub Pages)**: (https://juanhidayat2004.github.io/nabung/)
 
 ---
 
 ## 🌐 Cara Mengaktifkan GitHub Pages
 
-1. Buka repositori Anda di browser: [https://github.com/sujaihidayat14/nabung](https://github.com/sujaihidayat14/nabung)
+1. Buka repositori Anda di browser: [https://github.com/JuanHidayat2004/nabung](https://github.com/JuanHidayat2004/nabung)
 2. Klik tab **Settings** di bagian atas.
 3. Di bilah samping kiri (sidebar), pilih **Pages** (di bawah bagian *Code and automation*).
 4. Pada bagian **Build and deployment** > **Source**, ubah pilihan menjadi:

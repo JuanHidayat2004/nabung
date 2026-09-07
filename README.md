@@ -20,7 +20,7 @@ Aplikasi manajemen tabungan siswa resmi untuk **SDN 5 JURIT BARU** yang mendukun
 4. Pada bagian **Build and deployment** > **Source**, ubah pilihan menjadi:
    - **GitHub Actions**
 5. Selesai! Script otomatis di `.github/workflows/deploy.yml` akan langsung mem-build dan mempublikasikan website Anda ke alamat:
-   👉 **https://sujaihidayat14.github.io/nabung/**
+   👉 **https://juanhidayat2004.github.io/nabung/**
 
 ---
 

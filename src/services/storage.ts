@@ -78,54 +78,13 @@ let isSyncInitialized = false;
 
 // Helper Storage API with Cloud Firestore Real-time synchronization
 export const StorageService = {
-  // Clear any leftover dummy test students or transactions from previous testing
-  cleanOldDummyDataIfPresent() {
-    try {
-      const isPurged = localStorage.getItem(STORAGE_KEYS.FRESH_PURGE_APPLIED);
-      if (!isPurged) {
-        const rawStudents = localStorage.getItem(STORAGE_KEYS.STUDENTS);
-        if (rawStudents) {
-          try {
-            const parsed = JSON.parse(rawStudents);
-            if (Array.isArray(parsed) && parsed.some((s: Student) => s.id && (s.id.startsWith('std-10') || s.id.startsWith('std-20') || s.id.startsWith('std-30') || s.id.startsWith('std-40') || s.id.startsWith('std-50') || s.id.startsWith('std-60')))) {
-              localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify([]));
-              localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify([]));
-              FirestoreService.clearAllData().catch((err) => console.warn('Clear old dummy data error:', err));
-            }
-          } catch {
-            localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify([]));
-            localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify([]));
-          }
-        }
-        localStorage.setItem(STORAGE_KEYS.FRESH_PURGE_APPLIED, 'true');
-      }
-    } catch {
-      // ignore
-    }
-  },
-
   // Initialize Real-time synchronization with Firestore
   initRealtimeSync(onSyncStatusChange?: (status: { isConnected: boolean; lastSync: Date }) => void) {
-    this.cleanOldDummyDataIfPresent();
-
     if (isSyncInitialized) return () => {};
     isSyncInitialized = true;
 
     // 1. Subscribe to real-time student updates across all devices
     const unsubStudents = FirestoreService.subscribeStudents((cloudStudents) => {
-      // Detect if cloud still has old sample test data
-      const hasDummyCloud = cloudStudents.some(
-        (s) => s.id && (s.id === 'std-101' || s.id === 'std-102' || s.id === 'std-201')
-      );
-      if (hasDummyCloud) {
-        FirestoreService.clearAllData().catch((err) => console.warn('[Firestore] Error clearing dummy:', err));
-        localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify([]));
-        localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify([]));
-        window.dispatchEvent(new CustomEvent('sdn5_students_updated', { detail: [] }));
-        window.dispatchEvent(new CustomEvent('sdn5_transactions_updated', { detail: [] }));
-        return;
-      }
-
       if (cloudStudents) {
         localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(cloudStudents));
         window.dispatchEvent(new CustomEvent('sdn5_students_updated', { detail: cloudStudents }));
@@ -137,15 +96,6 @@ export const StorageService = {
 
     // 2. Subscribe to real-time transactions across all devices
     const unsubTxs = FirestoreService.subscribeTransactions((cloudTxs) => {
-      const hasDummyTxs = cloudTxs.some(
-        (t) => t.id && (t.id.startsWith('tx-20260831') || t.id.startsWith('tx-20260830'))
-      );
-      if (hasDummyTxs) {
-        localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify([]));
-        window.dispatchEvent(new CustomEvent('sdn5_transactions_updated', { detail: [] }));
-        return;
-      }
-
       if (cloudTxs) {
         localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(cloudTxs));
         window.dispatchEvent(new CustomEvent('sdn5_transactions_updated', { detail: cloudTxs }));
@@ -192,12 +142,11 @@ export const StorageService = {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.STUDENTS);
       if (!data) {
-        this.saveStudents(INITIAL_STUDENTS);
-        return INITIAL_STUDENTS;
+        return [];
       }
       return JSON.parse(data);
     } catch {
-      return INITIAL_STUDENTS;
+      return [];
     }
   },
 
@@ -205,21 +154,15 @@ export const StorageService = {
     localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(students));
     window.dispatchEvent(new CustomEvent('sdn5_students_updated', { detail: students }));
 
-    // Sync to Cloud Firestore in background
-    if (syncCloud) {
-      if (students.length === 0) {
-        FirestoreService.clearAllData().catch((err) =>
-          console.warn('[Firestore] Error clearing cloud data:', err)
-        );
-      } else {
-        FirestoreService.syncLocalToCloud(
-          students,
-          this.getTransactions(),
-          this.getSchoolProfile(),
-          this.getWAConfig(),
-          this.getSheetsConfig()
-        ).catch((err) => console.warn('[Firestore] Error syncing students to cloud:', err));
-      }
+    // Sync to Cloud Firestore in background (only when students exist; never clear cloud on empty array)
+    if (syncCloud && students.length > 0) {
+      FirestoreService.syncLocalToCloud(
+        students,
+        this.getTransactions(),
+        this.getSchoolProfile(),
+        this.getWAConfig(),
+        this.getSheetsConfig()
+      ).catch((err) => console.warn('[Firestore] Error syncing students to cloud:', err));
     }
   },
 
@@ -272,20 +215,19 @@ export const StorageService = {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.TRANSACTIONS);
       if (!data) {
-        this.saveTransactions(INITIAL_TRANSACTIONS);
-        return INITIAL_TRANSACTIONS;
+        return [];
       }
       return JSON.parse(data);
     } catch {
-      return INITIAL_TRANSACTIONS;
+      return [];
     }
   },
 
-  saveTransactions(transactions: Transaction[], syncCloud = true) {
+  saveTransactions(transactions: Transaction[], syncCloud = false) {
     localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactions));
     window.dispatchEvent(new CustomEvent('sdn5_transactions_updated', { detail: transactions }));
 
-    if (syncCloud) {
+    if (syncCloud && transactions.length > 0) {
       FirestoreService.syncLocalToCloud(
         this.getStudents(),
         transactions,
@@ -351,27 +293,9 @@ export const StorageService = {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.SCHOOL_PROFILE);
       if (!data) {
-        this.saveSchoolProfile(DEFAULT_SCHOOL_PROFILE);
         return DEFAULT_SCHOOL_PROFILE;
       }
-      const parsed: SchoolProfile = JSON.parse(data);
-      if (!parsed.headmaster || parsed.headmaster.includes('Sudirman') || parsed.treasurer.includes('Baiq Nurul')) {
-        const updated: SchoolProfile = {
-          ...parsed,
-          name: 'SD NEGERI 5 JURIT BARU',
-          subTitle: 'PEMERINTAH KABUPATEN LOMBOK TIMUR - DINAS PENDIDIKAN DAN KEBUDAYAAN',
-          address: 'Jl. Rinjani Selak Aik Desa Jurit Baru',
-          district: 'Kecamatan Pringgasela',
-          regency: 'Kabupaten Lombok Timur',
-          headmaster: 'ABD. RAHMAN, S.Pd',
-          headmasterNip: '196612311988031295',
-          treasurer: 'H. SUJAI, S.Pd',
-          treasurerNip: '196812311994031082',
-        };
-        this.saveSchoolProfile(updated);
-        return updated;
-      }
-      return parsed;
+      return JSON.parse(data);
     } catch {
       return DEFAULT_SCHOOL_PROFILE;
     }
@@ -389,7 +313,6 @@ export const StorageService = {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.SHEETS_CONFIG);
       if (!data) {
-        this.saveSheetsConfig(DEFAULT_SHEETS_CONFIG);
         return DEFAULT_SHEETS_CONFIG;
       }
       return JSON.parse(data);
@@ -410,7 +333,6 @@ export const StorageService = {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.WA_CONFIG);
       if (!data) {
-        this.saveWAConfig(DEFAULT_WA_CONFIG);
         return DEFAULT_WA_CONFIG;
       }
       return JSON.parse(data);

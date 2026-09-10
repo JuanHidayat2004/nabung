@@ -102,12 +102,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ school, onLoginSuccess
     <div className="w-full max-w-4xl mx-auto py-4 sm:py-8 flex flex-col items-center">
       {/* School Header Identity */}
       <div className="text-center mb-6 sm:mb-8 max-w-2xl px-4">
-        <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-emerald-800 text-white shadow-md border border-emerald-700 mb-3">
-          <School className="w-8 h-8 sm:w-10 sm:h-10 text-emerald-100" />
-        </div>
+        {/* Logo and Tagline Row */}
+        <div className="flex items-center justify-center gap-3 mb-3">
+          <div className="flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-emerald-800 text-white shadow-md border border-emerald-700 shrink-0">
+            <School className="w-7 h-7 sm:w-8 sm:h-8 text-emerald-100" />
+          </div>
 
-        <div className="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full border border-emerald-200 mb-2">
-          Sistem Informasi Tabungan Siswa Digital
+          <div className="inline-flex items-center px-3.5 py-1.5 bg-emerald-100 text-emerald-800 text-xs sm:text-sm font-bold rounded-full border border-emerald-200 shadow-xs">
+            Sistem Informasi Tabungan Siswa Digital
+          </div>
         </div>
 
         <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
